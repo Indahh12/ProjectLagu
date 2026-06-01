@@ -2,9 +2,11 @@ async function analisis(){
 
   if(historyMusic.length === 0){
 
-    alert("Masukkan riwayat lagu terlebih dahulu");
-    return;
+    alert(
+      "Masukkan riwayat lagu terlebih dahulu"
+    );
 
+    return;
   }
 
   const loading =
@@ -18,7 +20,11 @@ async function analisis(){
   const daftarLagu =
     historyMusic
     .map((d,i)=>
-      (i+1) + ". " + d.song + " - " + d.artist
+      (i+1) +
+      ". " +
+      d.song +
+      " - " +
+      d.artist
     )
     .join("\n");
 
@@ -29,9 +35,11 @@ async function analisis(){
         "https://project-lagu-backend-indahh12s-projects.vercel.app/api/analyze",
         {
           method:"POST",
+
           headers:{
             "Content-Type":"application/json"
           },
+
           body:JSON.stringify({
             songs: daftarLagu
           })
@@ -40,24 +48,28 @@ async function analisis(){
 
     console.log("Status:", res.status);
 
-    const json = await res.json();
+    const json =
+      await res.json();
 
     console.log("Response:", json);
 
     if(json.result){
 
-      hasilAnalisis = json.result;
+      hasilAnalisis =
+        json.result;
 
       document.getElementById("result").innerText =
         json.result;
 
       document.getElementById("generateBtn")
-        .style.display = "inline-block";
+        .style.display =
+        "inline-block";
 
     }else{
 
       document.getElementById("result").innerText =
-        json.error || "AI gagal menganalisis";
+        json.error ||
+        "AI gagal menganalisis";
 
     }
 
@@ -68,11 +80,10 @@ async function analisis(){
     alert("Error: " + err.message);
 
     document.getElementById("result").innerText =
-      err.message;
+      "Error: " + err.message;
 
   }finally{
 
     loading.style.display = "none";
-
   }
 }

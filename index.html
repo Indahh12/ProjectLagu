@@ -1,259 +1,10 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <title>Music Recommendation Analyzer</title>
-
-  <style>
-
-    *{
-      box-sizing:border-box;
-    }
-
-    body{
-      font-family:Arial, sans-serif;
-      margin:30px;
-      background:#f5f5f5;
-      color:#333;
-    }
-
-    .container{
-      max-width:800px;
-      margin:auto;
-    }
-
-    .card{
-      background:white;
-      padding:20px;
-      border-radius:12px;
-      margin-bottom:20px;
-      box-shadow:0 2px 10px rgba(0,0,0,0.1);
-    }
-
-    h2,h3{
-      margin-top:0;
-    }
-
-    input{
-      padding:10px;
-      margin:5px;
-      border:1px solid #ccc;
-      border-radius:8px;
-    }
-
-    button{
-      padding:10px 15px;
-      margin:5px;
-      border:none;
-      border-radius:8px;
-      cursor:pointer;
-      color:white;
-      font-weight:bold;
-    }
-
-    .btn-add{
-      background:#22c55e;
-    }
-
-    .btn-analyze{
-      background:#3b82f6;
-    }
-
-    .btn-image{
-      background:#a855f7;
-      display:none;
-    }
-
-    button:hover{
-      opacity:0.9;
-    }
-
-    #list,
-    #result{
-      border:1px solid #ddd;
-      padding:12px;
-      border-radius:8px;
-      white-space:pre-line;
-      background:#fafafa;
-    }
-
-    #loading{
-      display:none;
-      margin-top:10px;
-      font-weight:bold;
-    }
-
-    #aiImage{
-      display:none;
-      width:100%;
-      max-width:500px;
-      border-radius:12px;
-      margin-top:15px;
-    }
-
-  </style>
-</head>
-
-<body>
-
-<div class="container">
-
-  <div class="card">
-
-    <h2>🎵 Music Recommendation Analyzer</h2>
-
-    <p>
-      Bagaimana mengetahui rekomendasi lagu berdasarkan
-      riwayat pemutaran pengguna sebelumnya?
-    </p>
-
-    <input
-      id="song"
-      placeholder="Nama Lagu">
-
-    <input
-      id="artist"
-      placeholder="Nama Artis">
-
-    <br>
-
-    <button
-      class="btn-add"
-      onclick="tambah()">
-
-      Tambah Lagu
-    </button>
-
-    <button
-      class="btn-analyze"
-      onclick="analisis()">
-
-      Dapatkan Rekomendasi
-    </button>
-
-    <button
-      id="generateBtn"
-      class="btn-image"
-      onclick="generateImage()">
-
-      Generate AI Cover
-    </button>
-
-  </div>
-
-  <div class="card">
-
-    <h3 id="total">
-      Total Lagu: 0
-    </h3>
-
-  </div>
-
-  <div class="card">
-
-    <h3>Riwayat Pemutaran</h3>
-
-    <div id="list">
-      Belum ada data
-    </div>
-
-  </div>
-
-  <div class="card">
-
-    <h3>Rekomendasi AI</h3>
-
-    <div id="result">
-      Belum dianalisis
-    </div>
-
-    <div id="loading">
-      ⏳ AI sedang bekerja...
-    </div>
-
-  </div>
-
-  <div class="card">
-
-    <h3>AI Generated Cover</h3>
-
-    <img id="aiImage">
-
-  </div>
-
-</div>
-
-<script>
-
-let historyMusic = [];
-
-let hasilAnalisis = "";
-
-function render(){
-
-  let text = "";
-
-  historyMusic.forEach((d,i)=>{
-
-    text +=
-      (i+1) +
-      ". " +
-      d.song +
-      " - " +
-      d.artist +
-      "\n";
-
-  });
-
-  document.getElementById("total").innerText =
-    "Total Lagu: " +
-    historyMusic.length;
-
-  document.getElementById("list").innerText =
-    text || "Belum ada data";
-}
-
-function tambah(){
-
-  const song =
-    document.getElementById("song")
-    .value
-    .trim();
-
-  const artist =
-    document.getElementById("artist")
-    .value
-    .trim();
-
-  if(!song || !artist){
-
-    alert(
-      "Isi nama lagu dan artis"
-    );
-
-    return;
-  }
-
-  historyMusic.push({
-    song,
-    artist
-  });
-
-  document.getElementById("song").value = "";
-  document.getElementById("artist").value = "";
-
-  render();
-}
-
 async function analisis(){
 
   if(historyMusic.length === 0){
 
-    alert(
-      "Masukkan riwayat lagu terlebih dahulu"
-    );
-
+    alert("Masukkan riwayat lagu terlebih dahulu");
     return;
+
   }
 
   const loading =
@@ -267,11 +18,7 @@ async function analisis(){
   const daftarLagu =
     historyMusic
     .map((d,i)=>
-      (i+1) +
-      ". " +
-      d.song +
-      " - " +
-      d.artist
+      (i+1) + ". " + d.song + " - " + d.artist
     )
     .join("\n");
 
@@ -282,133 +29,50 @@ async function analisis(){
         "https://project-lagu-backend-indahh12s-projects.vercel.app/api/analyze",
         {
           method:"POST",
-
           headers:{
             "Content-Type":"application/json"
           },
-
           body:JSON.stringify({
             songs: daftarLagu
           })
         }
       );
 
-    const json =
-      await res.json();
+    console.log("Status:", res.status);
+
+    const json = await res.json();
+
+    console.log("Response:", json);
 
     if(json.result){
 
-      hasilAnalisis =
-        json.result;
+      hasilAnalisis = json.result;
 
       document.getElementById("result").innerText =
         json.result;
 
       document.getElementById("generateBtn")
-        .style.display =
-        "inline-block";
+        .style.display = "inline-block";
 
     }else{
 
       document.getElementById("result").innerText =
-        json.error ||
-        "AI gagal menganalisis";
+        json.error || "AI gagal menganalisis";
 
     }
 
   }catch(err){
 
-  console.error("ERROR:", err);
+    console.error("ERROR:", err);
 
-  alert(err);
+    alert("Error: " + err.message);
 
-  document.getElementById("result").innerText =
-    err.message;
-
-};
+    document.getElementById("result").innerText =
+      err.message;
 
   }finally{
 
     loading.style.display = "none";
+
   }
 }
-
-async function generateImage(){
-
-  if(!hasilAnalisis){
-
-    alert(
-      "Lakukan analisis terlebih dahulu"
-    );
-
-    return;
-  }
-
-  const loading =
-    document.getElementById("loading");
-
-  loading.style.display = "block";
-
-  try{
-
-    const res =
-      await fetch(
-        "https://project-lagu-backend-indahh12s-projects.vercel.app/api/generate-images",
-        {
-          method:"POST",
-
-          headers:{
-            "Content-Type":"application/json"
-          },
-
-          body:JSON.stringify({
-            recommendation:
-              hasilAnalisis
-          })
-        }
-      );
-
-    const data =
-      await res.json();
-
-    if(data.image){
-
-      const img =
-        document.getElementById("aiImage");
-
-      img.src =
-        data.image;
-
-      img.style.display =
-        "block";
-
-    }else{
-
-      alert(
-        data.error ||
-        "Gagal membuat gambar"
-      );
-
-    }
-
-  }catch(err){
-
-    console.error(err);
-
-    alert(
-      "Tidak bisa konek ke backend"
-    );
-
-  }finally{
-
-    loading.style.display =
-      "none";
-  }
-}
-
-render();
-
-</script>
-
-</body>
-</html>

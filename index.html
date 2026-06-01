@@ -318,10 +318,14 @@ async function analisis(){
 
   }catch(err){
 
-    console.error(err);
+  console.error("ERROR:", err);
 
-    document.getElementById("result").innerText =
-      "Gagal terhubung ke AI";
+  alert(err);
+
+  document.getElementById("result").innerText =
+    err.message;
+
+};
 
   }finally{
 
